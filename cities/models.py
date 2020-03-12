@@ -73,7 +73,6 @@ class SlugModel(models.Model):
 
 class Place(models.Model):
     name = models.CharField(max_length=200, db_index=True, verbose_name="ascii name")
-    alt_names = models.ManyToManyField(swapper.get_model_name("cities", "AlternativeName"))
 
     objects = GeoManager()
 
@@ -101,6 +100,9 @@ class Place(models.Model):
 
 class BaseContinent(Place, SlugModel):
     code = models.CharField(max_length=2, unique=True, db_index=True)
+    alt_names = models.ManyToManyField(
+        swapper.get_model_name("cities", "AlternativeName"), related_name='continents'
+    )
 
     def __str__(self):
         return force_text(self.name)
@@ -137,6 +139,10 @@ class BaseCountry(Place, SlugModel):
     capital = models.CharField(max_length=100)
     neighbours = models.ManyToManyField("self")
 
+    alt_names = models.ManyToManyField(
+        swapper.get_model_name("cities", "AlternativeName"), related_name='countries'
+    )
+
     class Meta:
         abstract = True
         ordering = ['name']
@@ -167,6 +173,9 @@ class Region(Place, SlugModel):
     country = models.ForeignKey(swapper.get_model_name('cities', 'Country'),
                                 related_name='regions',
                                 on_delete=SET_NULL_OR_CASCADE)
+    alt_names = models.ManyToManyField(
+        swapper.get_model_name("cities", "AlternativeName"), related_name='regions'
+    )
 
     class Meta:
         unique_together = (('country', 'name'),)
@@ -192,6 +201,10 @@ class Subregion(Place, SlugModel):
     region = models.ForeignKey(Region,
                                related_name='subregions',
                                on_delete=SET_NULL_OR_CASCADE)
+
+    alt_names = models.ManyToManyField(
+        swapper.get_model_name("cities", "AlternativeName"), related_name='subregions'
+    )
 
     class Meta:
         unique_together = (('region', 'id', 'name'),)
@@ -232,6 +245,10 @@ class BaseCity(Place, SlugModel):
     kind = models.CharField(max_length=10)  # http://www.geonames.org/export/codes.html
     timezone = models.CharField(max_length=40)
 
+    alt_names = models.ManyToManyField(
+        swapper.get_model_name("cities", "AlternativeName"), related_name='cities'
+    )
+
     class Meta:
         abstract = True
         unique_together = (('country', 'region', 'subregion', 'id', 'name'),)
@@ -262,6 +279,10 @@ class District(Place, SlugModel):
     city = models.ForeignKey(swapper.get_model_name('cities', 'City'),
                              related_name='districts',
                              on_delete=SET_NULL_OR_CASCADE)
+
+    alt_names = models.ManyToManyField(
+        swapper.get_model_name("cities", "AlternativeName"), related_name='districts'
+    )
 
     class Meta:
         unique_together = (('city', 'name'),)
@@ -299,6 +320,9 @@ class AlternativeName(SlugModel):
             return '{}-{}'.format(self.id, unicode_func(self.name))
         return None
 
+    class Meta:
+        swappable = swapper.swappable_setting('cities', 'AlternativeName')
+
 
 class PostalCode(Place, SlugModel):
     slug_contains_id = True
@@ -335,6 +359,10 @@ class PostalCode(Place, SlugModel):
                                  null=True,
                                  related_name='postal_codes',
                                  on_delete=SET_NULL_OR_CASCADE)
+
+    alt_names = models.ManyToManyField(
+        swapper.get_model_name("cities", "AlternativeName"), related_name='postal_codes'
+    )
 
     objects = GeoManager()
 
