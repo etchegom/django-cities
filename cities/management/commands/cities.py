@@ -53,7 +53,6 @@ from ...conf import (city_types, district_types, import_opts, import_opts_all,
                      INCLUDE_AIRPORT_CODES, INCLUDE_NUMERIC_ALTERNATIVE_NAMES,
                      NO_LONGER_EXISTENT_COUNTRY_CODES,
                      SKIP_CITIES_WITH_EMPTY_REGIONS, VALIDATE_POSTAL_CODES)
-from ...models import (Region, Subregion, District, PostalCode, AlternativeName)
 from ...util import geo_distance
 
 
@@ -66,6 +65,11 @@ if sys.version_info < (3,):
 Continent = load_model('cities', 'Continent')
 Country = load_model('cities', 'Country')
 City = load_model('cities', 'City')
+Region = load_model('cities', 'Region')
+Subregion = load_model('cities', 'Subregion')
+District = load_model('cities', 'District')
+PostalCode = load_model('cities', 'PostalCode')
+AlternativeName = load_model('cities', 'AlternativeName')
 
 
 # Only log errors during Travis tests
