@@ -53,7 +53,7 @@ from ...conf import (city_types, district_types, import_opts, import_opts_all,
                      INCLUDE_AIRPORT_CODES, INCLUDE_NUMERIC_ALTERNATIVE_NAMES,
                      NO_LONGER_EXISTENT_COUNTRY_CODES,
                      SKIP_CITIES_WITH_EMPTY_REGIONS, VALIDATE_POSTAL_CODES)
-from ...util import geo_distance, add_continents
+from ...util import geo_distance
 
 
 # Interpret all files as utf-8
@@ -238,9 +238,6 @@ class Command(BaseCommand):
                 continue
             items = [e.strip() for e in line.split('\t')]
             yield items
-
-    def import_continent(self):
-        add_continents(continent_model=Continent)
 
     def import_country(self):
         self.download('country')
@@ -469,8 +466,8 @@ class Command(BaseCommand):
 
     def import_city(self):
         self.download('city')
-        data = self.get_data('city')
 
+        data = self.get_data('city')
         total = sum(1 for _ in data)
 
         data = self.get_data('city')
