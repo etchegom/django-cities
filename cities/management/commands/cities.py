@@ -53,7 +53,6 @@ from ...conf import (city_types, district_types, import_opts, import_opts_all,
                      INCLUDE_AIRPORT_CODES, INCLUDE_NUMERIC_ALTERNATIVE_NAMES,
                      NO_LONGER_EXISTENT_COUNTRY_CODES,
                      SKIP_CITIES_WITH_EMPTY_REGIONS, VALIDATE_POSTAL_CODES)
-from ...models import (Region, Subregion, District, PostalCode, AlternativeName)
 from ...util import geo_distance
 
 
@@ -66,6 +65,11 @@ if sys.version_info < (3,):
 Continent = load_model('cities', 'Continent')
 Country = load_model('cities', 'Country')
 City = load_model('cities', 'City')
+Region = load_model('cities', 'Region')
+Subregion = load_model('cities', 'Subregion')
+District = load_model('cities', 'District')
+PostalCode = load_model('cities', 'PostalCode')
+AlternativeName = load_model('cities', 'AlternativeName')
 
 
 # Only log errors during Travis tests
@@ -199,9 +203,11 @@ class Command(BaseCommand):
                 self.logger.debug("Saving: {}/{}".format(self.data_dir, filename))
                 if not os.path.exists(self.data_dir):
                     os.makedirs(self.data_dir)
-                file = io.open(os.path.join(self.data_dir, filename), 'wb')
-                file.write(web_file.read())
-                file.close()
+                web_file_path = os.path.join(self.data_dir, filename)
+                if not os.path.exists(web_file_path):
+                    file = io.open(web_file_path, 'wb')
+                    file.write(web_file.read())
+                    file.close()
             elif not os.path.exists(os.path.join(self.data_dir, filename)):
                 raise Exception("File not found and download failed: {} [{}]".format(filename, url))
 
@@ -460,8 +466,8 @@ class Command(BaseCommand):
 
     def import_city(self):
         self.download('city')
-        data = self.get_data('city')
 
+        data = self.get_data('city')
         total = sum(1 for _ in data)
 
         data = self.get_data('city')
@@ -682,7 +688,6 @@ class Command(BaseCommand):
     def import_alt_name(self):
         self.download('alt_name')
         data = self.get_data('alt_name')
-
         total = sum(1 for _ in data)
 
         data = self.get_data('alt_name')
@@ -824,7 +829,6 @@ class Command(BaseCommand):
     def import_postal_code(self):
         self.download('postal_code')
         data = self.get_data('postal_code')
-
         total = sum(1 for _ in data)
 
         data = self.get_data('postal_code')

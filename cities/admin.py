@@ -63,10 +63,15 @@ if not swapper.is_swapped('cities', 'Continent'):
     admin.site.register(Continent, ContinentAdmin)
 if not swapper.is_swapped('cities', 'Country'):
     admin.site.register(Country, CountryAdmin)
-admin.site.register(Region, RegionAdmin)
-admin.site.register(Subregion, SubregionAdmin)
+if not swapper.is_swapped('cities', 'Region'):
+    admin.site.register(Region, RegionAdmin)
+if not swapper.is_swapped('cities', 'Subregion'):
+    admin.site.register(Subregion, SubregionAdmin)
 if not swapper.is_swapped('cities', 'City'):
     admin.site.register(City, CityAdmin)
-admin.site.register(District, DistrictAdmin)
-admin.site.register(AlternativeName, AltNameAdmin)
-admin.site.register(PostalCode, PostalCodeAdmin)
+if not swapper.is_swapped('cities', 'District'):
+    admin.site.register(District, DistrictAdmin)
+if not swapper.is_swapped('cities', 'AlternativeName'):
+    admin.site.register(AlternativeName, AltNameAdmin)
+if not swapper.is_swapped('cities', 'PostalCode'):
+    admin.site.register(PostalCode, PostalCodeAdmin)
